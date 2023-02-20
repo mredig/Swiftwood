@@ -161,4 +161,61 @@ final class AutomatedSwiftwoodTests: SwiftwoodTests {
 		XCTAssertNotEqual(password.censoredDescription, logFile.message.last)
 		XCTAssertEqual(Swiftwood.Level.info.level, logFile.logLevel)
 	}
+
+	func testFileDestination() throws {
+		let logFolder = try logFolder()
+
+		let logFile = logFolder
+			.appendingPathComponent("biglogfile")
+			.appendingPathExtension("log")
+
+		var fileDestination = try FileDestination(maxSize: 128, shouldCensor: false, outputFile: logFile)
+
+		log.appendDestination(fileDestination)
+
+		log.veryVerbose("Don't even worry")
+		log.verbose("Something small happened")
+		log.debug("Some minor update")
+		log.info("Look at me")
+		log.warning("uh oh")
+		log.error("Failed successfully")
+
+		var expected = [logFile] + (1...2)
+			.map { logFile.appendingPathExtension("\($0)") }
+		var contents = try FileManager.default.contentsOfDirectory(at: logFolder, includingPropertiesForKeys: nil)
+
+		XCTAssertEqual(Set(expected), Set(contents))
+
+		fileDestination = try FileDestination(maxSize: 8_000_000, shouldCensor: false, outputFile: logFile)
+		log.appendDestination(fileDestination, replicationOption: .replaceAlike)
+
+		log.veryVerbose("Don't even worry")
+		log.verbose("Something small happened")
+		log.debug("Some minor update")
+		log.info("Look at me")
+		log.warning("uh oh")
+		log.error("Failed successfully")
+
+		expected = [logFile] + (1...2)
+			.map { logFile.appendingPathExtension("\($0)") }
+		contents = try FileManager.default.contentsOfDirectory(at: logFolder, includingPropertiesForKeys: nil)
+
+		XCTAssertEqual(Set(expected), Set(contents))
+
+		fileDestination = try FileDestination(maxSize: 128, shouldCensor: false, outputFile: logFile)
+		log.appendDestination(fileDestination, replicationOption: .replaceAlike)
+
+		log.veryVerbose("Don't even worry")
+		log.verbose("Something small happened")
+		log.debug("Some minor update")
+		log.info("Look at me")
+		log.warning("uh oh")
+		log.error("Failed successfully")
+
+		expected = [logFile] + (1...5)
+			.map { logFile.appendingPathExtension("\($0)") }
+		contents = try FileManager.default.contentsOfDirectory(at: logFolder, includingPropertiesForKeys: nil)
+
+		XCTAssertEqual(Set(expected), Set(contents))
+	}
 }
