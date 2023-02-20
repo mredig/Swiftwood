@@ -39,7 +39,7 @@ final class AutomatedSwiftwoodTests: SwiftwoodTests {
 		XCTAssertEqual(log.destinations.count, 2)
 	}
 
-	func testFileDestination() throws {
+	func testFilesDestination() throws {
 		let logFolder = try logFolder()
 		let fileDestination = try FilesDestination(logFolder: logFolder, fileformat: .formattedString, minimumLogLevel: .info)
 		let consoleDestination = ConsoleLogDestination(maxBytesDisplayed: -1)
@@ -64,7 +64,7 @@ final class AutomatedSwiftwoodTests: SwiftwoodTests {
 		XCTAssertEqual(1, logContent.count)
 	}
 
-	func testFileDestinationFormattedString() throws {
+	func testFilesDestinationFormattedString() throws {
 		let logFolder = try logFolder()
 		let fileDestination = try FilesDestination(logFolder: logFolder, fileformat: .formattedString, minimumLogLevel: .info)
 		let consoleDestination = ConsoleLogDestination(maxBytesDisplayed: -1)
@@ -84,10 +84,10 @@ final class AutomatedSwiftwoodTests: SwiftwoodTests {
 
 		let logFile = try XCTUnwrap(String(data: logFileData, encoding: .utf8))
 		XCTAssertTrue(logFile.contains(message))
-		XCTAssertTrue(logFile.contains("(💙 INFO default) AutomatedSwiftwoodTests.swift testFileDestinationFormattedString()"))
+		XCTAssertTrue(logFile.contains("(💙 INFO default) AutomatedSwiftwoodTests.swift testFilesDestinationFormattedString()"))
 	}
 
-	func testFileDestinationJSON() throws {
+	func testFilesDestinationJSON() throws {
 		let logFolder = try logFolder()
 		let fileDestination = try FilesDestination(logFolder: logFolder, fileformat: .json, minimumLogLevel: .info)
 		let consoleDestination = ConsoleLogDestination(maxBytesDisplayed: -1)
@@ -110,7 +110,7 @@ final class AutomatedSwiftwoodTests: SwiftwoodTests {
 		XCTAssertEqual(Swiftwood.Level.info.level, logFile.logLevel)
 	}
 
-	func testFileDestinationCensored() throws {
+	func testFilesDestinationCensored() throws {
 		let logFolder = try logFolder()
 		let fileDestination = try FilesDestination(logFolder: logFolder, shouldCensor: true)
 		let consoleDestination = ConsoleLogDestination(maxBytesDisplayed: -1)
@@ -136,7 +136,7 @@ final class AutomatedSwiftwoodTests: SwiftwoodTests {
 		XCTAssertEqual(Swiftwood.Level.info.level, logFile.logLevel)
 	}
 
-	func testFileDestinationUncensored() throws {
+	func testFilesDestinationUncensored() throws {
 		let logFolder = try logFolder()
 		let fileDestination = try FilesDestination(logFolder: logFolder, shouldCensor: false)
 		let consoleDestination = ConsoleLogDestination(maxBytesDisplayed: -1)
