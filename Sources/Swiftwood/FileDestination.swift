@@ -1,5 +1,10 @@
 import Foundation
 
+/**
+`FileDestination`, in contrast with `FilesDestination`, outputs to a single or rotating file. `maxSize` sets the maximum size a log file can exist in bytes
+ before rotating to a new log file. if `maxSize` is reached, a new file will be created with a numerical increment from the previous, appending `.1` as the file extension
+ if it's the first rotation.
+ */
 public class FileDestination: SwiftwoodDestination {
 	public var format = Swiftwood.Format()
 	public var minimumLogLevel: Swiftwood.Level = .veryVerbose
