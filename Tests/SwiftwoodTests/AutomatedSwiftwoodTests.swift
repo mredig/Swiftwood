@@ -179,8 +179,9 @@ final class AutomatedSwiftwoodTests: SwiftwoodTests {
 		log.info("Look at me")
 		log.warning("uh oh")
 		log.error("Failed successfully")
+		log.critical("Aww fork! Shirt went down!")
 
-		var expected = [logFile] + (1...2)
+		var expected = [logFile] + (1...3)
 			.map { logFile.appendingPathExtension("\($0)") }
 		var contents = try FileManager.default.contentsOfDirectory(at: logFolder, includingPropertiesForKeys: nil)
 
@@ -195,8 +196,9 @@ final class AutomatedSwiftwoodTests: SwiftwoodTests {
 		log.info("Look at me")
 		log.warning("uh oh")
 		log.error("Failed successfully")
+		log.critical("Aww fork! Shirt went down!")
 
-		expected = [logFile] + (1...2)
+		expected = [logFile] + (1...3)
 			.map { logFile.appendingPathExtension("\($0)") }
 		contents = try FileManager.default.contentsOfDirectory(at: logFolder, includingPropertiesForKeys: nil)
 
@@ -211,8 +213,9 @@ final class AutomatedSwiftwoodTests: SwiftwoodTests {
 		log.info("Look at me")
 		log.warning("uh oh")
 		log.error("Failed successfully")
+		log.critical("Aww fork! Shirt went down!")
 
-		expected = [logFile] + (1...5)
+		expected = [logFile] + (1...7)
 			.map { logFile.appendingPathExtension("\($0)") }
 		contents = try FileManager.default.contentsOfDirectory(at: logFolder, includingPropertiesForKeys: nil)
 

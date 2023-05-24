@@ -21,6 +21,7 @@ final class ManualSwiftwoodTests: SwiftwoodTests {
 		log.info("Look at me")
 		log.warning("uh oh")
 		log.error("Failed successfully")
+		log.critical("Aww fork! Shirt went down!")
 
 		// manual verification - should resemble
 		/*
@@ -30,6 +31,7 @@ final class ManualSwiftwoodTests: SwiftwoodTests {
 		 12/10/2022 00:19:57.464 (💙 INFO default) ManualSwiftwoodTests.swift testLogging():21 - Look at me
 		 12/10/2022 00:19:57.464 (💛 WARNING default) ManualSwiftwoodTests.swift testLogging():22 - uh oh
 		 12/10/2022 00:19:57.465 (❤️ ERROR default) ManualSwiftwoodTests.swift testLogging():23 - Failed successfully
+		 12/10/2022 00:19:57.465 (💔💔 CRITICAL default) ManualSwiftwoodTests.swift testLogging():24 - Aww fork! Shirt went down!
 		 */
     }
 

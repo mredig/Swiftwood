@@ -197,6 +197,16 @@ public class Swiftwood {
 			custom(level: .error, message, category: category, file: file, function: function, line: line, context: context)
 		}
 
+	public static func critical(
+		_ message: Any ...,
+		category: LogCategory = .default,
+		file: String = #file,
+		function: String = #function,
+		line: Int = #line,
+		context: Any? = nil) {
+			custom(level: .critical, message, category: category, file: file, function: function, line: line, context: context)
+		}
+
 	public static func debug(
 		_ message: Any ...,
 		category: LogCategory = .default,
@@ -294,6 +304,7 @@ public class Swiftwood {
 		public static var info = Level(textValue: "💙 INFO", level: 60)
 		public static var warning = Level(textValue: "💛 WARNING", level: 80)
 		public static var error = Level(textValue: "❤️ ERROR", level: 100)
+		public static var critical = Level(textValue: "💔💔 CRITICAL", level: 110)
 
 		public let textValue: String
 		public let level: Int
@@ -316,8 +327,10 @@ public class Swiftwood {
 				self.textValue = "💙 INFO"
 			case 80...99:
 				self.textValue = "💛 WARNING"
-			default: // aka case 100...:
+			case 100...109:
 				self.textValue = "❤️ ERROR"
+			default: // aka case 110...:
+				self.textValue = "💔💔 CRITICAL"
 			}
 			self.level = rawValue
 		}
