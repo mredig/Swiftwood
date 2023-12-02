@@ -19,7 +19,7 @@ public class ConsoleLogDestination: SwiftwoodDestination {
 
 	public static let defaultMode = {
 		#if canImport(FoundationNetworking)
-		Mode.stdout(true)
+		Mode.stdout(flushImmediately: true)
 		#else
 		Mode.print
 		#endif
