@@ -6,6 +6,8 @@ public class ConsoleLogDestination: SwiftwoodDestination {
 	public var logFilter: LogCategory.Filter = .none
 	public var shouldCensor: Bool
 
+	public var flushImmediately = false
+
 	public var maxBytesDisplayed: Int
 
 	public init(maxBytesDisplayed: Int, shouldCensor: Bool = false) {
@@ -31,5 +33,7 @@ public class ConsoleLogDestination: SwiftwoodDestination {
 		let firstXCharacters = formattedMessage[formattedMessage.startIndex..<sectionEndIndex]
 
 		print(firstXCharacters + "... (too large to output in console)")
+		guard flushImmediately else { return }
+		fflush(stdout)
 	}
 }
