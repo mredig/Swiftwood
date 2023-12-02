@@ -6,8 +6,10 @@ import XCTest
  regex parse, and confirm...). In the mean time, these tests largely serve as templates by which you can manually run them and verify that they perform as expected.
  */
 final class ManualSwiftwoodTests: SwiftwoodTests {
-    func testLogging() throws {
-		let consoleDestination = ConsoleLogDestination(maxBytesDisplayed: -1)
+	/// ran into a runtime issue with trying to write to a non existant file in the automated variation while flusing immediately, so keeping this *for now*
+	/// If there has been no problem with the automated variant before 12/2/24, go ahead and delete this test
+	func testConsoleLoggingStdOut() throws {
+		let consoleDestination = ConsoleLogDestination(maxBytesDisplayed: -1, mode: .stdout(flushImmediately: false))
 		consoleDestination.minimumLogLevel = .veryVerbose
 		log.appendDestination(consoleDestination)
 		log.appendDestination(try FilesDestination(
@@ -25,15 +27,15 @@ final class ManualSwiftwoodTests: SwiftwoodTests {
 
 		// manual verification - should resemble
 		/*
-		 12/10/2022 00:19:57.461 (🤎 VERY VERBOSE default) ManualSwiftwoodTests.swift testLogging():18 - Don't even worry
-		 12/10/2022 00:19:57.463 (💜 VERBOSE default) ManualSwiftwoodTests.swift testLogging():19 - Something small happened
-		 12/10/2022 00:19:57.464 (💚 DEBUG default) ManualSwiftwoodTests.swift testLogging():20 - Some minor update
-		 12/10/2022 00:19:57.464 (💙 INFO default) ManualSwiftwoodTests.swift testLogging():21 - Look at me
-		 12/10/2022 00:19:57.464 (💛 WARNING default) ManualSwiftwoodTests.swift testLogging():22 - uh oh
-		 12/10/2022 00:19:57.465 (❤️ ERROR default) ManualSwiftwoodTests.swift testLogging():23 - Failed successfully
-		 12/10/2022 00:19:57.465 (💔💔 CRITICAL default) ManualSwiftwoodTests.swift testLogging():24 - Aww fork! Shirt went down!
+		 12/10/2022 00:19:57.461 (🤎 VERY VERBOSE default) ManualSwiftwoodTests.swift testConsoleLoggingStdOut():18 - Don't even worry
+		 12/10/2022 00:19:57.463 (💜 VERBOSE default) ManualSwiftwoodTests.swift testConsoleLoggingStdOut():19 - Something small happened
+		 12/10/2022 00:19:57.464 (💚 DEBUG default) ManualSwiftwoodTests.swift testConsoleLoggingStdOut():20 - Some minor update
+		 12/10/2022 00:19:57.464 (💙 INFO default) ManualSwiftwoodTests.swift testConsoleLoggingStdOut():21 - Look at me
+		 12/10/2022 00:19:57.464 (💛 WARNING default) ManualSwiftwoodTests.swift testConsoleLoggingStdOut():22 - uh oh
+		 12/10/2022 00:19:57.465 (❤️ ERROR default) ManualSwiftwoodTests.swift testConsoleLoggingStdOut():23 - Failed successfully
+		 12/10/2022 00:19:57.465 (💔💔 CRITICAL default) ManualSwiftwoodTests.swift testConsoleLoggingStdOut():24 - Aww fork! Shirt went down!
 		 */
-    }
+	}
 
 	func testBuildInfo() {
 		log.testingVerbosity = true

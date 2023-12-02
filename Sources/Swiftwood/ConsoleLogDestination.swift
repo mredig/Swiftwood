@@ -6,20 +6,29 @@ public class ConsoleLogDestination: SwiftwoodDestination {
 	public var logFilter: LogCategory.Filter = .none
 	public var shouldCensor: Bool
 
-	@available(macOS 10.15, iOS 13.0, tvOS 13.0, *)
-	public var flushImmediately: Bool {
-		get { _flushImmediately }
-		set { _flushImmediately = newValue }
+	public var mode: Mode
+	public enum Mode {
+		case print
+		/// `flushImmediately` will only have any effect if used on the apple product generation of macOS 10.15 and iOS 13 and later.
+		case stdout(flushImmediately: Bool)
 	}
-	private var _flushImmediately = false
 
 	public var maxBytesDisplayed: Int
 
 	private let stdOut = FileHandle.standardOutput
 
-	public init(maxBytesDisplayed: Int, shouldCensor: Bool = false) {
+	public static let defaultMode = {
+		#if canImport(FoundationNetworking)
+		Mode.stdout(true)
+		#else
+		Mode.print
+		#endif
+	}()
+
+	public init(maxBytesDisplayed: Int, shouldCensor: Bool = false, mode: Mode = ConsoleLogDestination.defaultMode) {
 		self.maxBytesDisplayed = maxBytesDisplayed
 		self.shouldCensor = shouldCensor
+		self.mode = mode
 	}
 
 	public func sendToDestination(_ entry: Swiftwood.LogEntry) {
@@ -45,27 +54,29 @@ public class ConsoleLogDestination: SwiftwoodDestination {
 		print(firstXCharacters + "... (too large to output in console)")
 	}
 
-	private func print(_ args: Any ..., terminator: String = "\n") {
-		let stringified = args
-			.map { String(describing: $0) }
-			.joined(separator: " ")
-			.appending(terminator)
-			.utf8
-		let data = Data(stringified)
-		do {
-			if #available(macOS 10.15.4, iOS 13.4, tvOS 13.4, *) {
-				try stdOut.write(contentsOf: data)
-			} else {
-				stdOut.write(data)
-			}
-			if #available(macOS 10.15, iOS 13.0, tvOS 13.0, *) {
-				if flushImmediately {
-					try stdOut.synchronize()
+	private func print(_ string: String) {
+		switch mode {
+		case .print:
+			Swift.print(string)
+		case .stdout(let flushImmediately):
+			let newlined = string + "\n"
+			let data = Data(newlined.utf8)
+			do {
+				if #available(macOS 10.15.4, iOS 13.4, tvOS 13.4, *) {
+					try stdOut.write(contentsOf: data)
+				} else {
+					stdOut.write(data)
 				}
+				if #available(macOS 10.15, iOS 13.0, tvOS 13.0, *) {
+					if flushImmediately {
+						try stdOut.synchronize()
+					}
+				}
+			} catch {
+				Swift.print("Error sending to stdout: \(error)")
+				Swift.print(newlined)
 			}
-		} catch {
-			Swift.print("Error sending to stdout: \(error)")
-			Swift.print(stringified)
 		}
+
 	}
 }

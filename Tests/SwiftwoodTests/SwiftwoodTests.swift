@@ -28,6 +28,39 @@ class SwiftwoodTests: XCTestCase {
 		return logFolder
 	}
 
+	func captureStdOutLine(alsoPrint: Bool = true, _ block: @escaping () throws -> Void) async throws -> String {
+		guard
+			let stdoutStr = try await captureStdOut(lineCount: 1, block).first
+		else { throw SimpleError(message: "No stdout content") }
+		return stdoutStr
+	}
+
+	func captureStdOut(lineCount: Int = 1, alsoPrint: Bool = true, _ block: @escaping () throws -> Void) async throws -> [String] {
+		let pipe = Pipe()
+		let originalStdOut = dup(STDOUT_FILENO)
+		dup2(pipe.fileHandleForWriting.fileDescriptor, STDOUT_FILENO)
+
+		let bytes = pipe.fileHandleForReading.bytes
+
+		try block()
+
+		dup2(originalStdOut, STDOUT_FILENO)
+		close(originalStdOut)
+
+		var buffer: [String] = []
+
+		for try await value in bytes.lines {
+			buffer.append(value)
+			if alsoPrint {
+				print(value)
+			}
+			guard buffer.count == lineCount else { continue }
+			break
+		}
+
+		return buffer
+	}
+
 	struct CensoredPassword: CensoredLogItem, RawRepresentable, CustomStringConvertible {
 		let rawValue: String
 
@@ -45,5 +78,9 @@ class SwiftwoodTests: XCTestCase {
 			else { return "***" }
 			return "***" + String(rawValue[start..<rawValue.endIndex])
 		}
+	}
+
+	struct SimpleError: Error {
+		let message: String
 	}
 }

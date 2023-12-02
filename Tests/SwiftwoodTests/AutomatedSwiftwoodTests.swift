@@ -221,4 +221,146 @@ final class AutomatedSwiftwoodTests: SwiftwoodTests {
 
 		XCTAssertEqual(Set(expected), Set(contents))
 	}
+
+	func testConsoleLoggingStdOut() async throws {
+		let consoleDestination = ConsoleLogDestination(maxBytesDisplayed: -1, mode: .stdout(flushImmediately: false))
+		consoleDestination.minimumLogLevel = .veryVerbose
+		log.appendDestination(consoleDestination)
+		log.appendDestination(try FilesDestination(
+			logFolder: nil,
+			fileformat: .formattedString
+		))
+
+		let veryVerboseMessage = "Don't even worry"
+		var result = try await captureStdOutLine {
+			log.veryVerbose(veryVerboseMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(veryVerboseMessage))
+		XCTAssertTrue(result.contains("(🤎 VERY VERBOSE default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():"))
+
+		let verboseMessage = "Something small happened"
+		result = try await captureStdOutLine {
+			log.verbose(verboseMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(verboseMessage))
+		XCTAssertTrue(result.contains("(💜 VERBOSE default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():"))
+
+
+		let debugMessage = "Some minor update"
+		result = try await captureStdOutLine {
+			log.debug(debugMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(debugMessage))
+		XCTAssertTrue(result.contains("(💚 DEBUG default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():"))
+
+		let infoMessage = "Look at me"
+		result = try await captureStdOutLine {
+			log.info(infoMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(infoMessage))
+		XCTAssertTrue(result.contains("(💙 INFO default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():"))
+
+		let warningMessage = "uh oh"
+		result = try await captureStdOutLine {
+			log.warning(warningMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(warningMessage))
+		XCTAssertTrue(result.contains("(💛 WARNING default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():"))
+
+		let errorMessage = "uh oh"
+		result = try await captureStdOutLine {
+			log.error(errorMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(errorMessage))
+		XCTAssertTrue(result.contains("(❤️ ERROR default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():"))
+
+		let criticalMessage = "Aww fork! Shirt went down!"
+		result = try await captureStdOutLine {
+			log.critical(criticalMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(criticalMessage))
+		XCTAssertTrue(result.contains("(💔💔 CRITICAL default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():"))
+
+		// manual verification - should resemble
+		/*
+		 12/10/2022 00:19:57.461 (🤎 VERY VERBOSE default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():18 - Don't even worry
+		 12/10/2022 00:19:57.463 (💜 VERBOSE default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():19 - Something small happened
+		 12/10/2022 00:19:57.464 (💚 DEBUG default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():20 - Some minor update
+		 12/10/2022 00:19:57.464 (💙 INFO default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():21 - Look at me
+		 12/10/2022 00:19:57.464 (💛 WARNING default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():22 - uh oh
+		 12/10/2022 00:19:57.465 (❤️ ERROR default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():23 - Failed successfully
+		 12/10/2022 00:19:57.465 (💔💔 CRITICAL default) AutomatedSwiftwoodTests.swift testConsoleLoggingStdOut():24 - Aww fork! Shirt went down!
+		 */
+	}
+
+	func testConsoleLoggingPrint() async throws {
+		let consoleDestination = ConsoleLogDestination(maxBytesDisplayed: -1, mode: .print)
+		consoleDestination.minimumLogLevel = .veryVerbose
+		log.appendDestination(consoleDestination)
+		log.appendDestination(try FilesDestination(
+			logFolder: nil,
+			fileformat: .formattedString
+		))
+
+		let veryVerboseMessage = "Don't even worry"
+		var result = try await captureStdOutLine {
+			log.veryVerbose(veryVerboseMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(veryVerboseMessage))
+		XCTAssertTrue(result.contains("(🤎 VERY VERBOSE default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():"))
+
+		let verboseMessage = "Something small happened"
+		result = try await captureStdOutLine {
+			log.verbose(verboseMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(verboseMessage))
+		XCTAssertTrue(result.contains("(💜 VERBOSE default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():"))
+
+
+		let debugMessage = "Some minor update"
+		result = try await captureStdOutLine {
+			log.debug(debugMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(debugMessage))
+		XCTAssertTrue(result.contains("(💚 DEBUG default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():"))
+
+		let infoMessage = "Look at me"
+		result = try await captureStdOutLine {
+			log.info(infoMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(infoMessage))
+		XCTAssertTrue(result.contains("(💙 INFO default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():"))
+
+		let warningMessage = "uh oh"
+		result = try await captureStdOutLine {
+			log.warning(warningMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(warningMessage))
+		XCTAssertTrue(result.contains("(💛 WARNING default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():"))
+
+		let errorMessage = "uh oh"
+		result = try await captureStdOutLine {
+			log.error(errorMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(errorMessage))
+		XCTAssertTrue(result.contains("(❤️ ERROR default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():"))
+
+		let criticalMessage = "Aww fork! Shirt went down!"
+		result = try await captureStdOutLine {
+			log.critical(criticalMessage)
+		}
+		XCTAssertTrue(result.hasSuffix(criticalMessage))
+		XCTAssertTrue(result.contains("(💔💔 CRITICAL default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():"))
+
+		// manual verification - should resemble
+		/*
+		 12/10/2022 00:19:57.461 (🤎 VERY VERBOSE default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():18 - Don't even worry
+		 12/10/2022 00:19:57.463 (💜 VERBOSE default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():19 - Something small happened
+		 12/10/2022 00:19:57.464 (💚 DEBUG default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():20 - Some minor update
+		 12/10/2022 00:19:57.464 (💙 INFO default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():21 - Look at me
+		 12/10/2022 00:19:57.464 (💛 WARNING default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():22 - uh oh
+		 12/10/2022 00:19:57.465 (❤️ ERROR default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():23 - Failed successfully
+		 12/10/2022 00:19:57.465 (💔💔 CRITICAL default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():24 - Aww fork! Shirt went down!
+		 */
+	}
 }
