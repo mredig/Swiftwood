@@ -61,7 +61,7 @@ final class ManualSwiftwoodTests: SwiftwoodTests {
 		log.info("should be toot")
 		log.info("should be cached")
 
-		// manual verification - should resemble
+		// manual verification - should resemble (21501 will change as xcode versions increase)
 		/*
 		 12/10/2022 00:19:35.699 (💙 INFO default) ManualSwiftwoodTests.swift testBuildInfo():44 - testttt -- build: 21501
 		 cache hit
