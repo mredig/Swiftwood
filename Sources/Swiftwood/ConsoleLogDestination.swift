@@ -59,24 +59,27 @@ open class ConsoleLogDestination: SwiftwoodDestination {
 		case .print:
 			Swift.print(string)
 		case .stdout(let flushImmediately):
-			let newlined = string + "\n"
-			let data = Data(newlined.utf8)
-			do {
-				if #available(macOS 10.15.4, iOS 13.4, tvOS 13.4, *) {
-					try stdOut.write(contentsOf: data)
-				} else {
-					stdOut.write(data)
-				}
-				if #available(macOS 10.15, iOS 13.0, tvOS 13.0, *) {
-					if flushImmediately {
-						try stdOut.synchronize()
-					}
-				}
-			} catch {
-				Swift.print("Error sending to stdout: \(error)")
-				Swift.print(newlined)
-			}
+			stdOutPrint(string, flushImmediately: flushImmediately, terminator: "\n")
 		}
+	}
 
+	public func stdOutPrint(_ string: String, flushImmediately: Bool = false, terminator: String = "/n") {
+		let terminated = string + terminator
+		let data = Data(terminated.utf8)
+		do {
+			if #available(macOS 10.15.4, iOS 13.4, tvOS 13.4, *) {
+				try stdOut.write(contentsOf: data)
+			} else {
+				stdOut.write(data)
+			}
+			if #available(macOS 10.15, iOS 13.0, tvOS 13.0, *) {
+				if flushImmediately {
+					try stdOut.synchronize()
+				}
+			}
+		} catch {
+			Swift.print("Error sending to stdout: \(error)")
+			Swift.print(terminated)
+		}
 	}
 }
