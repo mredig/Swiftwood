@@ -3,7 +3,7 @@ import Foundation
 /**
  Named "Files" because it creates a new file with each new log entry. Intending to create an additional single file solution in the future. Currently, no cleanup is done automatically for accumulated log files.
  */
-public class FilesDestination: SwiftwoodDestination {
+open class FilesDestination: SwiftwoodDestination {
 	/// Ignored for any `fileFormat` other than `formattedString`
 	public var format: Swiftwood.Format = .init()
 	public var shouldCensor: Bool
@@ -65,7 +65,7 @@ public class FilesDestination: SwiftwoodDestination {
 		var entries: Int
 	}
 
-	public func sendToDestination(_ entry: Swiftwood.LogEntry) {
+	open func sendToDestination(_ entry: Swiftwood.LogEntry) {
 		let level = entry.logLevel.level
 
 		let filename = "\(entry.timestamp.timeIntervalSince1970)-\(UUID())-\(level)"

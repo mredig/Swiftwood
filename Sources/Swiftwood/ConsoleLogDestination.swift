@@ -1,6 +1,6 @@
 import Foundation
 
-public class ConsoleLogDestination: SwiftwoodDestination {
+open class ConsoleLogDestination: SwiftwoodDestination {
 	public var format = Swiftwood.Format()
 	public var minimumLogLevel: Swiftwood.Level = .info
 	public var logFilter: LogCategory.Filter = .none
@@ -31,7 +31,7 @@ public class ConsoleLogDestination: SwiftwoodDestination {
 		self.mode = mode
 	}
 
-	public func sendToDestination(_ entry: Swiftwood.LogEntry) {
+	open func sendToDestination(_ entry: Swiftwood.LogEntry) {
 		let formattedMessage = format.convertEntryToString(entry, censoring: shouldCensor)
 
 		guard maxBytesDisplayed > 0 else {

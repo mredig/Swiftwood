@@ -5,7 +5,7 @@ import Foundation
  before rotating to a new log file. if `maxSize` is reached, a new file will be created with a numerical increment from the previous, appending `.1` as the file extension
  if it's the first rotation.
  */
-public class FileDestination: SwiftwoodDestination {
+open class FileDestination: SwiftwoodDestination {
 	public var format = Swiftwood.Format()
 	public var minimumLogLevel: Swiftwood.Level = .veryVerbose
 	public var logFilter: LogCategory.Filter = .none
@@ -62,7 +62,7 @@ public class FileDestination: SwiftwoodDestination {
 		self.fileHandle = try Self.fileHandle(for: outputFile, withMaxSize: maxSize)
 	}
 
-	public func sendToDestination(_ entry: Swiftwood.LogEntry) {
+	open func sendToDestination(_ entry: Swiftwood.LogEntry) {
 		let formattedMessage = format.convertEntryToString(entry, censoring: shouldCensor)
 
 		let messageData = Data(formattedMessage.utf8) + Data("\n".utf8)
