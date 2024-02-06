@@ -363,4 +363,205 @@ final class AutomatedSwiftwoodTests: SwiftwoodTests {
 		 12/10/2022 00:19:57.465 (💔💔 CRITICAL default) AutomatedSwiftwoodTests.swift testConsoleLoggingPrint():24 - Aww fork! Shirt went down!
 		 */
 	}
+
+	struct SampleCustomType {
+		let value = "boo"
+	}
+	func testContextOutputFromContextCustomType() async throws {
+		let consoleDestination = ConsoleLogDestination(maxBytesDisplayed: -1, mode: .print)
+		consoleDestination.minimumLogLevel = .veryVerbose
+		log.appendDestination(consoleDestination)
+
+		let format = Swiftwood.Format(
+			parts: [
+				.logLevel,
+				.staticText(" "),
+				.message,
+				.staticText(" "),
+				.context
+			])
+		consoleDestination.format = format
+		let customConversion = Swiftwood.Format.ContextFormatter.custom { context in
+			if let custom = context as? SampleCustomType {
+				return "MEGA SAMPLE SUCCESS: \(custom.value)"
+			} else {
+				return Swiftwood.Format.ContextFormatter.attemptDictionaryCast.formatContext(context)
+			}
+		}
+
+		let context = SampleCustomType()
+
+		let stringSuffix = "Context: SampleCustomType(value: \"boo\")"
+		let customSuffix = "MEGA SAMPLE SUCCESS: boo"
+
+		let veryVerboseMessage = "simple message"
+
+		consoleDestination.format.contextFormatter = .convertToString
+		var result = try await captureStdOutLine {
+			log.info(veryVerboseMessage, context: context)
+		}
+		XCTAssertTrue(result.hasSuffix(stringSuffix))
+
+		consoleDestination.format.contextFormatter = .attemptDictionaryCast
+		result = try await captureStdOutLine {
+			log.info(veryVerboseMessage, context: context)
+		}
+		XCTAssertTrue(result.hasSuffix(stringSuffix))
+
+		consoleDestination.format.contextFormatter = customConversion
+		result = try await captureStdOutLine {
+			log.info(veryVerboseMessage, context: context)
+		}
+		XCTAssertTrue(result.hasSuffix(customSuffix))
+	}
+
+	func testContextOutputFromContextString() async throws {
+		let consoleDestination = ConsoleLogDestination(maxBytesDisplayed: -1, mode: .print)
+		consoleDestination.minimumLogLevel = .veryVerbose
+		log.appendDestination(consoleDestination)
+
+		let format = Swiftwood.Format(
+			parts: [
+				.logLevel,
+				.staticText(" "),
+				.message,
+				.staticText(" "),
+				.context
+			])
+		consoleDestination.format = format
+		let customConversion = Swiftwood.Format.ContextFormatter.custom { context in
+			if let custom = context as? SampleCustomType {
+				return "MEGA SAMPLE SUCCESS: \(custom.value)"
+			} else {
+				return Swiftwood.Format.ContextFormatter.attemptDictionaryCast.formatContext(context)
+			}
+		}
+
+		let context = "barfoo"
+
+		let stringSuffix = "barfoo"
+
+		let veryVerboseMessage = "simple message"
+
+		consoleDestination.format.contextFormatter = .convertToString
+		var result = try await captureStdOutLine {
+			log.info(veryVerboseMessage, context: context)
+		}
+		XCTAssertTrue(result.hasSuffix(stringSuffix))
+
+		consoleDestination.format.contextFormatter = .attemptDictionaryCast
+		result = try await captureStdOutLine {
+			log.info(veryVerboseMessage, context: context)
+		}
+		XCTAssertTrue(result.hasSuffix(stringSuffix))
+
+		consoleDestination.format.contextFormatter = customConversion
+		result = try await captureStdOutLine {
+			log.info(veryVerboseMessage, context: context)
+		}
+		XCTAssertTrue(result.hasSuffix(stringSuffix))
+	}
+
+	func testContextOutputFromContextDictionary() async throws {
+		let consoleDestination = ConsoleLogDestination(maxBytesDisplayed: -1, mode: .print)
+		consoleDestination.minimumLogLevel = .veryVerbose
+		log.appendDestination(consoleDestination)
+
+		let format = Swiftwood.Format(
+			parts: [
+				.logLevel,
+				.staticText(" "),
+				.message,
+				.staticText(" "),
+				.context
+			])
+		consoleDestination.format = format
+		let customConversion = Swiftwood.Format.ContextFormatter.custom { context in
+			if let custom = context as? SampleCustomType {
+				return "MEGA SAMPLE SUCCESS: \(custom.value)"
+			} else {
+				return Swiftwood.Format.ContextFormatter.attemptDictionaryCast.formatContext(context)
+			}
+		}
+
+		let contextA: [String: Any] = ["foo": CocoaError(.coderValueNotFound), "bar": 1234]
+
+		let aStringSuffix = "]"
+		let aStringContains1 = ##""bar": 1234"##
+		let aStringContains2 = ##""foo": Foundation.CocoaError(_nsError: Error Domain=NSCocoaErrorDomain Code=4865 "The data couldn’t be read because it is missing.")"##
+		let aDictionarySuffix = """
+			Context:
+				bar: 1234
+				foo: CocoaError(_nsError: Error Domain=NSCocoaErrorDomain Code=4865 "The data couldn’t be read because it is missing.")
+			"""
+
+		let veryVerboseMessage = "simple message"
+
+		consoleDestination.format.contextFormatter = .convertToString
+		var result = try await captureStdOut(lineCount: 1) {
+			log.info(veryVerboseMessage, context: contextA)
+		}.joined(separator: "\n")
+		XCTAssertTrue(result.contains(aStringContains1))
+		XCTAssertTrue(result.contains(aStringContains2))
+		XCTAssertTrue(result.hasSuffix(aStringSuffix))
+
+		consoleDestination.format.contextFormatter = .attemptDictionaryCast
+		result = try await captureStdOut(lineCount: 3) {
+			log.info(veryVerboseMessage, context: contextA)
+		}.joined(separator: "\n")
+		XCTAssertTrue(result.hasSuffix(aDictionarySuffix))
+
+		consoleDestination.format.contextFormatter = customConversion
+		result = try await captureStdOut(lineCount: 3) {
+			log.info(veryVerboseMessage, context: contextA)
+		}.joined(separator: "\n")
+		XCTAssertTrue(result.hasSuffix(aDictionarySuffix))
+	}
+
+	func testContextOutputFromContextNull() async throws {
+		let consoleDestination = ConsoleLogDestination(maxBytesDisplayed: -1, mode: .print)
+		consoleDestination.minimumLogLevel = .veryVerbose
+		log.appendDestination(consoleDestination)
+
+		let format = Swiftwood.Format(
+			parts: [
+				.logLevel,
+				.staticText(" "),
+				.message,
+				.staticText(" "),
+				.context
+			])
+		consoleDestination.format = format
+		let customConversion = Swiftwood.Format.ContextFormatter.custom { context in
+			if let custom = context as? SampleCustomType {
+				return "MEGA SAMPLE SUCCESS: \(custom.value)"
+			} else {
+				return Swiftwood.Format.ContextFormatter.attemptDictionaryCast.formatContext(context)
+			}
+		}
+
+		let context: Int? = nil
+
+		let veryVerboseMessage = "simple message"
+		let stringSuffix = "\(veryVerboseMessage) "
+
+		consoleDestination.format.contextFormatter = .convertToString
+		var result = try await captureStdOutLine {
+			log.info(veryVerboseMessage, context: context)
+		}
+		XCTAssertTrue(result.hasSuffix(stringSuffix))
+
+		consoleDestination.format.contextFormatter = .attemptDictionaryCast
+		result = try await captureStdOutLine {
+			log.info(veryVerboseMessage, context: context)
+		}
+		XCTAssertTrue(result.hasSuffix(stringSuffix))
+
+		consoleDestination.format.contextFormatter = customConversion
+		result = try await captureStdOutLine {
+			log.info(veryVerboseMessage, context: context)
+		}
+		XCTAssertTrue(result.hasSuffix(stringSuffix))
+	}
+
 }
