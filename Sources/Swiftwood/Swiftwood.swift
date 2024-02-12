@@ -144,6 +144,24 @@ public class Swiftwood {
 		function: String = #function,
 		line: Int = #line,
 		context: Any? = nil) {
+			customv(
+				level: level,
+				message,
+				category: category,
+				file: file,
+				function: function,
+				line: line,
+				context: context)
+		}
+
+	public static func customv(
+		level: Level,
+		_ message: [Any],
+		category: LogCategory = .default,
+		file: String = #file,
+		function: String = #function,
+		line: Int = #line,
+		context: Any? = nil) {
 			let date = Date()
 			let logEntry = LogEntry(
 				timestamp: date,
