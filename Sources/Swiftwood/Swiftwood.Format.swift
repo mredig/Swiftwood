@@ -49,7 +49,7 @@ extension Swiftwood {
 					output.append(string)
 				case .message:
 					let message = entry
-						.message
+						.message.rawValue
 						.map {
 							if
 								censoring,

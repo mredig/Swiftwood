@@ -4,7 +4,7 @@ extension Swiftwood {
 	public struct LogEntry {
 		public let timestamp: Date
 		public let logLevel: Level
-		public let message: [Any]
+		public let message: MessageComponents
 		public let category: LogCategory
 		public let file: String
 		public let function: String

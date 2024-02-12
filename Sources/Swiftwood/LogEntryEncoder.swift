@@ -23,7 +23,7 @@ public struct CodableLogEntry: Codable {
 		self.timestamp = input.timestamp
 		self.logLevel = input.logLevel.level
 		self.message = input
-			.message
+			.message.rawValue
 			.map {
 				if
 					shouldCensor,

@@ -144,9 +144,11 @@ public class Swiftwood {
 		function: String = #function,
 		line: Int = #line,
 		context: Any? = nil) {
+			let components = MessageComponents(rawValue: message)
+
 			customv(
 				level: level,
-				message,
+				components,
 				category: category,
 				file: file,
 				function: function,
@@ -154,9 +156,17 @@ public class Swiftwood {
 				context: context)
 		}
 
+	public struct MessageComponents: RawRepresentable {
+		public let rawValue: [Any]
+
+		public init(rawValue: [Any]) {
+			self.rawValue = rawValue
+		}
+	}
+
 	public static func customv(
 		level: Level,
-		_ message: [Any],
+		_ message: MessageComponents,
 		category: LogCategory = .default,
 		file: String = #file,
 		function: String = #function,
