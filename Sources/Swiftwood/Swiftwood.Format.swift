@@ -28,6 +28,24 @@ extension Swiftwood {
 			.message,
 		]
 
+		public static let defaultFormattingPartsWithContext: [Part] = [
+			.timestamp(),
+			.staticText(" ("),
+			.logLevel,
+			.staticText(" "),
+			.category,
+			.staticText(") "),
+			.file,
+			.staticText(" "),
+			.function,
+			.staticText(":"),
+			.lineNumber,
+			.staticText(" - "),
+			.message,
+			.staticText(" - "),
+			.context,
+		]
+
 		public init(
 			parts: [Part] = Self.defaultFormattingParts,
 			separator: String = ""
